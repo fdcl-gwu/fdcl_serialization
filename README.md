@@ -1,6 +1,12 @@
-# fdcl_param
+# fdcl_serializlation
 
-This library provides a C++ tool to read parameters from a text file, or save them to a text file.
+This library provides a C++ tool to save variables into a binary buffer or read variables from a binary buffer. 
+
+In computer science, in the context of data storage, [serialization](https://en.wikipedia.org/wiki/Serialization) is the process of translating data structures or object state into a format that can be stored (for example, in a file or memory buffer) or transmitted (for example, across a network connection link) and reconstructed later (possibly in a different computer environment).
+
+This library specifically deals with serialization of floating numbers into a binary buffer, intended to be used for wireless communications. Trasmitting floating numbers over the binary format is desirable as 1. the transmitted data size is smaller 2. there is no loss of floating number digits.
+
+This library is based on [Beej's Guide to Network Programming](http://beej.us/guide/bgnet/html/multi/advanced.html#serialization). A few errors are fixed, and it is wrapped with C++ for dynamic allocation, and also to support [Eigen](http://eigen.tuxfamily.org/) matrix types. 
 
 ## Installation
 
@@ -8,12 +14,12 @@ To test the example code provided in this packacge, simply run
 
 ```
 make
-./test_fdcl_param
+./test_fdcl_serial
 ```
 
 ### Integration to your own project
 
-This library is composed of a single header file, namely `fdcl_param.h`. You just need to copy the file to your project source folder, and include the header file.
+This library is composed of a single header file, namely `fdcl_serial.h`. You just need to copy the file to your project source folder, and include the header file.
 
 This library also requires the [Eigen library](http://eigen.tuxfamily.org/) as it suppors the eigen matrix types. For convenience, the eigen library is included in the package. The folder to the eigen library should be availalbe to the compiler. For example, the following makefile is used for the sample code.
 
@@ -22,54 +28,21 @@ This library also requires the [Eigen library](http://eigen.tuxfamily.org/) as i
 INCLUDE_PATH= ./eigen-3.3.4
 CFLAGS=$(foreach d, $(INCLUDE_PATH), -I$d) -Wall 
 
-test_fdcl_param:  fdcl_param.h test_fdcl_param.cpp
-	g++ -o test_fdcl_param test_fdcl_param.cpp  $(CFLAGS) 
+test_fdcl_serial:  test_fdcl_serial.cpp fdcl_serial.h
+	g++ -o test_fdcl_serial test_fdcl_serial.cpp  $(CFLAGS) 
 ```
 
 
 
-## Configuration File
+## Supported Variable Types
 
-The format of the compatible text file is illustrated by the following sample file saved as `config.txt`
+The followig types are suppored.
 
-```
-UAV:
-	m: 2.5
-	J: 3, 0, 0,  0, 2, 0,  0, 0, 1
-Control:
-	kR: 1.8
-	kW: 2.0
-IMU:
-	dev: "/dev/tty"
-I2C:
-	dev: "/dev/i2c"
-	addr: 50
-GPS:
-	available: 1
-```
-
-The name of the parameter is composed of the group name, and the variable name. For example, in the above file, `UAV` is the group name and `m` is the variable name.
-
-More precisely, if the new line begins with letters without any space, the letters before `:` are considered as the **group**. Or, if the new line begins with `tab`, the the letters between `tab` and `:` are considered as the **variable**. 
-
-The parameter name is constructed by concatenating **group** and **variable**. Note that the **variable** names can be repeated if they do not belong to the same **group**.
-
-The followig types are suppored for the parameter value:
-
-	1. bool (0: false, 1: true)
-	2. double
-	3. integer
-	4. string (nested in " ")
-	5. Eigen double matrix of an arbitrary size
-
-Note the string parameter should be nested in ```" "```. For an eigen matrix, each row is concetanted in a single line, where each element is separated by `,  ` For example, in the above configuration file, the 3x3 matrix J is defined as
-
-```
-J = [ 3 2 1; 
-      0 2 0;
-      0 0 1];
-```
-in the matlab notation.
+	1. bool (1 byte)
+	2. integer (2 byets)
+	3. float (4 byets)
+	4. double (8 bytes)
+	5. Eigen float or double matrix of an arbitrary size
 
 ## Usage
 
@@ -77,74 +50,108 @@ The usuage of the library is illustrated by the following sample code.
 
 ```
 #include <iostream>
-#include <string>
+#include <iomanip> // for setprecision
 #include "Eigen/Dense"
-#include "fdcl_param.h"
+#include "fdcl_serial.h"
 
 using namespace std;
 
 int main(void)
 {
-	double m;
-	string dev;
-	int addr;
-	Eigen::Matrix<double, 3, 3> J;
-	bool GPS;
 	
-	fdcl_param pfile;
+	bool b=false;
+	int i=-1;
+	float f=0.987654321;
+	double d=-0.123456789;
+	Eigen::Matrix<double, 3, 1> vec(0.1,0.2,0.3);
+
+	unsigned char* buf_received;
 	
-	pfile.open("config.txt");
+	// sender packing
+	fdcl_serial buf_send;
+	
+	buf_send.pack(b); // 1 byte
+	buf_send.pack(i);  // 2 byte
+	buf_send.pack(f);  // 4 byte
+	buf_send.pack(d);  // 8 byte
+	buf_send.pack(vec); // 8x3 =24 bytes
 
-	pfile.read("UAV.m",m);
-	cout << "m=" << m << endl;
-	pfile.read("UAV.J",J);
-	cout << "J=" << J << endl;
-	pfile.read("IMU.dev",dev);
-	cout << "dev=" << dev << endl;
-	pfile.read("GPS.available",GPS);
-	cout << "GPS=" << GPS << endl;
+	cout << "buf_send_size=" << buf_send.size() << " bytes" << endl;
 
-	pfile.save("I2C.addr",50);
-	pfile.read("I2C.addr",addr);
-	cout << "addr=" << addr << endl;
-	pfile.save("GPS.available",true);
-	pfile.read("GPS.available",GPS);
-	cout << "GPS=" << GPS << endl;
+	// transmitting "buf_send.data()" to unsigned char* of the receiver 	
+	// this parts is done through a serial port or a wifi
+	buf_received=buf_send.data();
 
-	pfile.close();
+	// clear variables to verify unpacking
+	b=true;
+	i=0;
+	f=0.;
+	d=0.;
+	vec.setZero();
+	cout << setprecision(10);
+
+	// receiver unpacking
+	fdcl_serial buf_recv(buf_received,39);
+
+	buf_recv.unpack(b); 
+	cout << "b=" << b << endl;
+	buf_recv.unpack(i);
+	cout << "i=" << i << endl;
+	buf_recv.unpack(f);
+	cout << "f=" << f << endl;
+	buf_recv.unpack(d);
+	cout << "d=" << d << endl;
+	buf_recv.unpack(vec);
+	cout << "vec=" << vec << endl;
 }
 ```
 
-First, the head file should be inlcuded.
+### Sender
+
+The library is used by a **sender** that packs data and send it over wifi or serial port, and a **receiver** that collects the binary data and unpack into varialbes. 
+
+Sender initialize an empty buffer by 
 
 ```
-#include "fdcl_param.h"
+fdcl_serial buf_send;
 ```
-
-The class object is constructed and the configuration file is opened by
-
-```
-fdcl_param pfile;
-pfile.open("config.txt");
-```
-
-To read a double valued parameter for the variable `m` under the group `UAV`, first a double varialbe `m` should be declared, and the member function `read` is called as follows.
+and pack data by the member function `pack()`. For example, a double variable `d` is packed by
 
 ```
-pfile.read("UAV.m",m);
+buf_send.pack(d);
 ```
-Note that the **group** name and the **variable** name are joined with `.` in between. 
+Then, the size of the buffer will be increased by 8 bytes. The above packing procedure can be repeated for other variales. 
 
-Similarly, to save an integer valued parameter for `I2C.addr` can be saved by
+Once the packing is completed, the size of the buffer and the data of the buffer can be accessed by `buf_send.size()` and `buf_send.data()` respectively. In particular, `buf_send.data()` returns a type `unsigned char*`, which can be transmitted to the sender via wifi or other communication protocols.
+
+
+### Receiver
+
+The receiver first recives the data from the sender, and save it to a variable with the type of `unsigned char*`. This procedure is completed via wifi or other communication protocols. 
+
+Once the binary data is received, the receiver creates the class via
 
 ```
-pfile.save("I2C.addr",50);
+fdcl_serial buf_recv(buf_received,39);
 ```
-The configuration file should be closed by
+NOte the constructor of the receiver class requires to inputs, namley the variable name of the `unsigned char*` received, and **the size of the data in bytes**. 
+
+It is assumed that the sender and the receiver share the information about
+
+1. the order of variables packed
+2. the type of each variable packed
+3. the total size of the buffer
+
+When creating the receiver class, it is critial to have the exact size of the buffer in bytes, which can be accesed through `buf_send.size()` after the sender completed the packing.
+
+Once the receiver buffer is created, the data can be unpaced by
+
 ```
-pfile.close();
+	buf_recv.unpack(b); 
 ```
 
-## What it does NOT do
-* Save function does NOT add a new entry to the configuration text file. When the save function is called, the parameter must alred exist in the text file.
-* We are not able to add any comment to the configuration text file.
+
+
+## REQUIREMENTS
+* The order and the type of variables in packing must match with those of unpacking.
+* The total size of the data packed must be manually specificed when unpacking.

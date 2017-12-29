@@ -1,7 +1,6 @@
-#include <iomanip>
 #include <iostream>
+#include <iomanip> // for setprecision
 #include "Eigen/Dense"
-#include <vector>
 #include "fdcl_serial.h"
 
 using namespace std;
