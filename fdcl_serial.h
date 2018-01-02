@@ -5,6 +5,8 @@
 #include <iostream>
 #include "Eigen/Dense"
 #include <vector>
+#include <typeinfo>
+#include <stdio.h>
 
 // macros for packing floats and doubles:
 #define pack754_16(f) (pack754((f), 16, 5))
@@ -115,12 +117,24 @@ void fdcl_serial::pack(int& i)
 void fdcl_serial::pack(bool& b)
 {
 	unsigned char buf_bool[1];
+	unsigned int f=0;
+	unsigned int t=1;
+	
+//	printf("f= %d, %c\n",f,f);
+//	printf("t= %d, %c\n",t,t);
+		
 	
 	if(b==false)
-		packi8(buf_bool, 0);
+	{	//buf_bool=(unsiged char) "0";
+		packi8(buf_bool, f);
+	}
 	else
-		packi8(buf_bool, 1);
-
+	{
+		packi8(buf_bool, t);
+	}
+	
+//	printf("buf_bool=%d\n", buf_bool[0]);
+	
 	buf.insert(buf.end(),buf_bool,buf_bool+1);
 }
 
@@ -196,13 +210,17 @@ void fdcl_serial::unpack(int& i)
 
 void fdcl_serial::unpack(bool& b)
 {
-	unsigned char buf_bool[1], bb;
+	unsigned char buf_bool[1];
+	unsigned int bb;
+
 
 	copy(&buf[loc],&buf[loc+1],buf_bool);
-	bb= unpacki16(buf_bool);
+	bb= unpacku8(buf_bool);
+
+//	printf("bb=%d\n",bb);
 	if(bb==0)
 		b=false;
-	else if(bb==1)	
+	else if(bb==256)	
 		b=true;
 	
 	loc+=1;

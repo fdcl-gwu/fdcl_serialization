@@ -9,7 +9,7 @@ using namespace std;
 int main(void)
 {
 	
-	bool b=false;
+	bool b=true;
 	int i=-1;
 	float f=0.987654321;
 	double d=-0.123456789;
@@ -33,7 +33,7 @@ int main(void)
 	buf_received=buf_send.data();
 
 	// clear variables to verify unpacking
-	b=true;
+	b=false;
 	i=0;
 	f=0.;
 	d=0.;
