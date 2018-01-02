@@ -39,6 +39,17 @@ public:
 	{
 //		delete[] buf;
 	};
+	void clear()
+	{
+		loc=0;
+		buf.clear();
+	}
+	void init(unsigned char* buf_received, int size)
+	{
+		loc=0;
+		buf.clear();
+		buf.insert(buf.end(),buf_received,buf_received+size);
+	};
 	void pack(double&);
 	void pack(int&);
 	void pack(float&);
