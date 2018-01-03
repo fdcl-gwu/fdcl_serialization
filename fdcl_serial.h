@@ -128,23 +128,17 @@ void fdcl_serial::pack(int& i)
 void fdcl_serial::pack(bool& b)
 {
 	unsigned char buf_bool[1];
-	unsigned int f=0;
-	unsigned int t=1;
-	
-//	printf("f= %d, %c\n",f,f);
-//	printf("t= %d, %c\n",t,t);
-		
 	
 	if(b==false)
-	{	//buf_bool=(unsiged char) "0";
-		packi8(buf_bool, f);
+	{
+		buf_bool[0]=0;
 	}
 	else
 	{
-		packi8(buf_bool, t);
+		buf_bool[0]=1;
 	}
 	
-//	printf("buf_bool=%d\n", buf_bool[0]);
+//	printf("buf_bool=%d, %X\n", buf_bool[0],buf_bool[0]);
 	
 	buf.insert(buf.end(),buf_bool,buf_bool+1);
 }
@@ -222,18 +216,26 @@ void fdcl_serial::unpack(int& i)
 void fdcl_serial::unpack(bool& b)
 {
 	unsigned char buf_bool[1];
-	unsigned int bb;
-
+//	unsigned int bb;
 
 	copy(&buf[loc],&buf[loc+1],buf_bool);
-	bb= unpacku8(buf_bool);
-
-//	printf("bb=%d\n",bb);
-	if(bb==0)
-		b=false;
-	else if(bb==256)	
-		b=true;
+//	printf("UNPACK: %d %X\n",buf_bool[0],buf_bool[0]);
 	
+	if(buf_bool[0]==0)
+	{
+//		cout << "false" << endl;
+		b=false;
+	}
+	else if (buf_bool[0]==1)
+	{
+		b=true;
+//		cout << "true" << endl;
+
+	}
+	else
+	{
+		cout << "ERROR: fdcl_serial::unpack(bool)" << endl;
+	}
 	loc+=1;
 }
  
