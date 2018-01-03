@@ -21,7 +21,8 @@ int main(void)
 	// sender packing
 	fdcl_serial buf_send, buf_recv;
 	
-	//buf_send.clear();  // required when repacking to the same buffer
+	//buf_send.clear();   required when repacking to the same buffer
+	buf_send.reserve(40);// optional: reserve the buffer for 40 bytes // 
 	buf_send.pack(b0); // 1 byte
 	buf_send.pack(b1); // 1 byte
 	buf_send.pack(i);  // 2 byte

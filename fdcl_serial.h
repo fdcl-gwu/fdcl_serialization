@@ -51,6 +51,10 @@ public:
 		buf.clear();
 		buf.insert(buf.end(),buf_received,buf_received+size);
 	};
+	void reserve(int size)
+	{
+		buf.reserve(size);
+	}
 	void pack(double&);
 	void pack(int&);
 	void pack(float&);
