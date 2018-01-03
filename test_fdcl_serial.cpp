@@ -10,6 +10,7 @@ int main(void)
 {
 	
 	bool b=true;
+	bool bf=false;
 	int i=-1;
 	float f=0.987654321;
 	double d=-0.123456789;
@@ -21,11 +22,13 @@ int main(void)
 	fdcl_serial buf_send;
 	
 	buf_send.pack(b); // 1 byte
-	buf_send.pack(i);  // 2 byte
+	buf_send.pack(bf);
+	
+/*	buf_send.pack(i);  // 2 byte
 	buf_send.pack(f);  // 4 byte
 	buf_send.pack(d);  // 8 byte
 	buf_send.pack(vec); // 8x3 =24 bytes
-
+*/
 	cout << "buf_send_size=" << buf_send.size() << " bytes" << endl;
 
 	// transmitting "buf_send.data()" to unsigned char* of the receiver 	
@@ -34,6 +37,7 @@ int main(void)
 
 	// clear variables to verify unpacking
 	b=false;
+	bf=true;
 	i=0;
 	f=0.;
 	d=0.;
@@ -41,11 +45,14 @@ int main(void)
 	cout << setprecision(10);
 
 	// receiver unpacking
-	fdcl_serial buf_recv(buf_received,39);
+	fdcl_serial buf_recv(buf_received,2);
 
 	buf_recv.unpack(b); 
 	cout << "b=" << b << endl;
-	buf_recv.unpack(i);
+	buf_recv.unpack(bf); 
+	cout << "bf=" << bf << endl;
+
+/*	buf_recv.unpack(i);
 	cout << "i=" << i << endl;
 	buf_recv.unpack(f);
 	cout << "f=" << f << endl;
@@ -53,7 +60,7 @@ int main(void)
 	cout << "d=" << d << endl;
 	buf_recv.unpack(vec);
 	cout << "vec=" << vec << endl;
-	
+*/	
 	
 	
 }
