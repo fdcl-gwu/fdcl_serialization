@@ -33,6 +33,7 @@ public:
 	};
 	fdcl_serial(unsigned char* buf_received, int size)
 	{
+		loc=0;
 		buf.insert(buf.end(),buf_received,buf_received+size);
 	};
 	~fdcl_serial()
@@ -71,11 +72,9 @@ public:
 private:
 	unsigned long long int pack754(long double f, unsigned bits, unsigned expbits);
 	long double unpack754(unsigned long long int i, unsigned bits, unsigned expbits);
-	void packi8(unsigned char *buf, unsigned int i);
 	void packi16(unsigned char *buf, unsigned int i);
 	void packi32(unsigned char *buf, unsigned long int i);
 	void packi64(unsigned char *buf, unsigned long long int i);
-	unsigned int unpacku8(unsigned char *buf);
 	int unpacki16(unsigned char *buf);
 	unsigned int unpacku16(unsigned char *buf);
 	long int unpacki32(unsigned char *buf);
@@ -215,22 +214,13 @@ void fdcl_serial::unpack(int& i)
 
 void fdcl_serial::unpack(bool& b)
 {
-	unsigned char buf_bool[1];
-//	unsigned int bb;
-
-	copy(&buf[loc],&buf[loc+1],buf_bool);
-//	printf("UNPACK: %d %X\n",buf_bool[0],buf_bool[0]);
-	
-	if(buf_bool[0]==0)
+	if(buf[loc]==0)
 	{
-//		cout << "false" << endl;
 		b=false;
 	}
-	else if (buf_bool[0]==1)
+	else if (buf[loc]==1)
 	{
 		b=true;
-//		cout << "true" << endl;
-
 	}
 	else
 	{
@@ -338,10 +328,6 @@ long double fdcl_serial::unpack754(unsigned long long int i, unsigned bits, unsi
 
 
 // store integer into unsigned char buffer
-void fdcl_serial::packi8(unsigned char *buf, unsigned int i)
-{
-	*buf++ = i;
-}
 void fdcl_serial::packi16(unsigned char *buf, unsigned int i)
 {
 	*buf++ = i>>8; *buf++ = i;
@@ -374,10 +360,6 @@ int fdcl_serial::unpacki16(unsigned char *buf)
 	else { i = -1 - (unsigned int)(0xffffu - i2); }
 
 	return i;
-}
-unsigned int fdcl_serial::unpacku8(unsigned char *buf)
-{
-	return ((unsigned int)buf[0]<<8);
 }
 unsigned int fdcl_serial::unpacku16(unsigned char *buf)
 {
