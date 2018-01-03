@@ -43,15 +43,15 @@ int main(void)
 	d=0.;
 	vec.setZero();
 	cout << setprecision(10);
-	/*
+
 	// receiver unpacking
 	fdcl_serial buf_recv(buf_received,2);
 
 	buf_recv.unpack(b); 
 	cout << "b=" << b << endl;
-	buf_recv.unpack(bf); 
-	cout << "bf=" << bf << endl;
-*/
+//	buf_recv.unpack(bf); 
+//	cout << "bf=" << bf << endl;
+	
 /*	buf_recv.unpack(i);
 	cout << "i=" << i << endl;
 	buf_recv.unpack(f);
