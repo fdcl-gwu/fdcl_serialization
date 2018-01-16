@@ -19,7 +19,7 @@ make
 
 ### Integration to your own project
 
-This library is composed of a single header file, namely `fdcl_serial.h`. You just need to copy the file to your project source folder, and include the header file.
+This library is composed of a header file `fdcl_serial.h` declaring the class, and `fdcl_serial.cpp` for implementation. You just need to copy the files to your project source folder, and include the header file.
 
 This library also requires the [Eigen library](http://eigen.tuxfamily.org/) as it suppors the eigen matrix types. For convenience, the eigen library is included in the package. The folder to the eigen library should be availalbe to the compiler. For example, the following makefile is used for the sample code.
 
@@ -28,10 +28,11 @@ This library also requires the [Eigen library](http://eigen.tuxfamily.org/) as i
 INCLUDE_PATH= ./eigen-3.3.4
 CFLAGS=$(foreach d, $(INCLUDE_PATH), -I$d) -Wall 
 
-test_fdcl_serial:  test_fdcl_serial.cpp fdcl_serial.h
-	g++ -o test_fdcl_serial test_fdcl_serial.cpp  $(CFLAGS) 
+test_fdcl_serial:  test_fdcl_serial.cpp fdcl_serial.h fdcl_serial.cpp
+	g++ -o test_fdcl_serial test_fdcl_serial.cpp fdcl_serial.cpp $(CFLAGS) 
 ```
 
+Or, `fdcl_serial.cpp` can be complied separately to `fdcl_serial.o` and linked to your main program.
 
 
 ## Supported Variable Types
@@ -149,6 +150,19 @@ Once the receiver buffer is created, the data can be unpaced by
 ```
 	buf_recv.unpack(b); 
 ```
+
+## Using Eigen Matrices
+
+The package supports Eigen matrices for save and read functions, which are declared as template functions. Therefore, those functions must be explicitly instantiated according to the particular type of the Eigen matrices used. 
+
+For example, the above example uses the Eigen marix type `Eigen::Matrix<double, 3, 1>`, and at the end of `fdcl_serial.cpp` the following explicit istantiattion are included:
+
+```
+template void fdcl_serial::pack(Eigen::MatrixBase< Eigen::Matrix <double, 3,1> >& M);
+template void fdcl_serial::unpack(Eigen::MatrixBase< Eigen::Matrix <double, 3,1> >& M);
+```
+
+When using other types or sizes of Eigen matrices, the corresponding instantiations must be included at the end of `fdcl_param.cpp`
 
 
 
