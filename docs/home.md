@@ -123,7 +123,7 @@ First, add this as a submodule in git.
 
 ```
 cd 'main/project/dir'
-git submodule add https://github.com/fdcl-gwu/fdcl_serial.git ./libraries/fdcl_serial
+git submodule add https://github.com/fdcl-gwu/fdcl_serialization.git ./libraries/fdcl_serialization
 git submodule update --init --recursive
 ```
 
