@@ -135,7 +135,7 @@ git submodule update --init --recursive
 Now, in the main project's CMake file (CMakeLists.txt), do the followings:
 ```
 include_directories(${PROJECT_SOURCE_DIR}/libraries/fdcl_serial/include)
-add_subdirectory(${PROJECT_SOURCE_DIR}/libraries/fdcl_serial fdcl_serial)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libraries/fdcl_serialization fdcl_serial)
 ```
 
 Also, whenever you make a file that uses fdcl_serial class, add `fdcl_serial` to the linker:
