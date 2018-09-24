@@ -1,0 +1,4 @@
+/home/kani/Documents/fdcl_serialization/build/CMakeFiles/edit_cache.dir
+/home/kani/Documents/fdcl_serialization/build/CMakeFiles/rebuild_cache.dir
+/home/kani/Documents/fdcl_serialization/build/CMakeFiles/test_fdcl_serial.dir
+/home/kani/Documents/fdcl_serialization/build/CMakeFiles/fdcl_serial.dir
