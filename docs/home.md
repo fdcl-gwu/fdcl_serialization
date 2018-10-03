@@ -123,7 +123,7 @@ First, add this as a submodule in git.
 
 ```
 cd 'main/project/dir'
-git submodule add https://github.com/fdcl-gwu/fdcl_serial.git ./libraries/fdcl_serial
+git submodule add https://github.com/fdcl-gwu/fdcl_serialization.git ./libraries/fdcl_serialization
 git submodule update --init --recursive
 ```
 
@@ -135,7 +135,7 @@ git submodule update --init --recursive
 Now, in the main project's CMake file (CMakeLists.txt), do the followings:
 ```
 include_directories(${PROJECT_SOURCE_DIR}/libraries/fdcl_serial/include)
-add_subdirectory(${PROJECT_SOURCE_DIR}/libraries/fdcl_serial fdcl_serial)
+add_subdirectory(${PROJECT_SOURCE_DIR}/libraries/fdcl_serialization fdcl_serial)
 ```
 
 Also, whenever you make a file that uses fdcl_serial class, add `fdcl_serial` to the linker:
