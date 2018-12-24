@@ -21,7 +21,7 @@ fdcl::serial::serial(unsigned char* buf_received, int size)
 {
     // set the initial location of the buffer to be the first index
     loc = 0;
-    
+
     buf.insert(buf.end(), buf_received, buf_received + size);
 };
 
@@ -208,7 +208,7 @@ void fdcl::serial::unpack(bool &b)
     if(buf[loc] == 0) b = false;
     else if (buf[loc] == 1) b = true;
     else std::cout << "FDCL SERIAL: serial::unpack(bool)" << std::endl;
-    
+
     loc += 1;
 }
 
@@ -450,6 +450,13 @@ template void fdcl::serial::pack_as_float(
         Eigen::MatrixBase< Eigen::Matrix<double,4,1> >& M);
 template void fdcl::serial::pack_as_float(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
+template void fdcl::serial::pack_as_float(
+    Eigen::MatrixBase< Eigen::Matrix<double,4,3> >& M
+);
+template void fdcl::serial::pack_as_float(
+    Eigen::MatrixBase< Eigen::Matrix<double,7,3> >& M
+);
+
 
 template void fdcl::serial::unpack_as_double(
         Eigen::MatrixBase< Eigen::Matrix<double,3,1> >& M);
@@ -459,6 +466,13 @@ template void fdcl::serial::unpack_as_double(
         Eigen::MatrixBase< Eigen::Matrix<double,4,1> >& M);
 template void fdcl::serial::unpack_as_double(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
+template void fdcl::serial::unpack_as_double(
+    Eigen::MatrixBase< Eigen::Matrix<double,4,3> >& M
+);
+template void fdcl::serial::unpack_as_double(
+    Eigen::MatrixBase< Eigen::Matrix<double,7,3> >& M
+);
+
 
 template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,3,1> >& M);
