@@ -1,2 +1,0 @@
-/usr/bin/ar qc libfdcl_serial.a  CMakeFiles/fdcl_serial.dir/src/serial.cpp.o
-/usr/bin/ranlib libfdcl_serial.a
