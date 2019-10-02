@@ -489,4 +489,6 @@ template void fdcl::serial::unpack(
 template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,4,1> >& M);
 template void fdcl::serial::unpack(
+        Eigen::MatrixBase< Eigen::Matrix<double,6,1> >& M);
+template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
