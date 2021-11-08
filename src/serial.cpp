@@ -442,6 +442,8 @@ template void fdcl::serial::pack(
 template void fdcl::serial::pack(
         Eigen::MatrixBase< Eigen::Matrix<double,6,1> >& M);
 template void fdcl::serial::pack(
+        Eigen::MatrixBase< Eigen::Matrix<double,8,1> >& M);
+template void fdcl::serial::pack(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
 
 template void fdcl::serial::pack_as_float(
@@ -459,6 +461,9 @@ template void fdcl::serial::pack_as_float(
     Eigen::MatrixBase< Eigen::Matrix<double,6,1> >& M
 );
 template void fdcl::serial::pack_as_float(
+    Eigen::MatrixBase< Eigen::Matrix<double,8,1> >& M
+);
+template void fdcl::serial::pack_as_float(
     Eigen::MatrixBase< Eigen::Matrix<double,7,3> >& M
 );
 
@@ -470,8 +475,9 @@ template void fdcl::serial::unpack_as_double(
 template void fdcl::serial::unpack_as_double(
         Eigen::MatrixBase< Eigen::Matrix<double,4,1> >& M);
 template void fdcl::serial::unpack_as_double(
-    Eigen::MatrixBase< Eigen::Matrix<double,6,1> >& M
-);
+    Eigen::MatrixBase< Eigen::Matrix<double,6,1> >& M);
+template void fdcl::serial::unpack_as_double(
+    Eigen::MatrixBase< Eigen::Matrix<double,8,1> >& M);
 template void fdcl::serial::unpack_as_double(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
 template void fdcl::serial::unpack_as_double(
@@ -490,5 +496,7 @@ template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,4,1> >& M);
 template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,6,1> >& M);
+template void fdcl::serial::unpack(
+        Eigen::MatrixBase< Eigen::Matrix<double,8,1> >& M);
 template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
