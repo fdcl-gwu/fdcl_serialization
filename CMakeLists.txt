@@ -13,7 +13,7 @@ add_library(fdcl_serial STATIC ${fdcl_serial_src})
 
 add_executable(test_fdcl_serial src/test_fdcl_serial.cpp)
 target_compile_options(test_fdcl_serial
-    PRIVATE -Wall -o -O3 -std=c++11
+    PRIVATE -Wall -O3 -std=c++11
 )
 target_link_libraries(test_fdcl_serial
     fdcl_serial
