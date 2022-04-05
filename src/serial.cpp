@@ -116,7 +116,7 @@ template<typename Derived>
 void fdcl::serial::pack(Eigen::MatrixBase<Derived> &M)
 {
     int i, j;
-    unsigned char buf_double[8], buf_float[4];
+    unsigned char buf_double[8], buf_float[4], buf_int[2];
     unsigned long long int ii;
 
     typedef typename Eigen::MatrixBase<Derived>::Scalar type;
@@ -143,6 +143,18 @@ void fdcl::serial::pack(Eigen::MatrixBase<Derived> &M)
                 ii = pack754_32(M(i, j));  // convert to IEEE 754
                 packi32(buf_float, ii);
                 buf.insert(buf.end(), buf_float, buf_float + 4);
+            }
+        }
+        break;
+
+        case 'i':  // int
+        for(i = 0; i < M.rows(); i++)
+        {
+            for(j = 0; j < M.cols(); j++)
+            {
+                ii = pack754_16(M(i, j));  // convert to IEEE 754
+                packi16(buf_int, ii);
+                buf.insert(buf.end(), buf_int, buf_int + 2);
             }
         }
         break;
@@ -216,7 +228,7 @@ template<typename Derived>
 void fdcl::serial::unpack(Eigen::MatrixBase<Derived> &M)
 {
     int i, j;
-    unsigned char buf_double[8], buf_float[4];
+    unsigned char buf_double[8], buf_float[4], buf_int[2];
     unsigned long long int ii;
 
     typedef typename Eigen::MatrixBase<Derived>::Scalar type;
@@ -245,6 +257,19 @@ void fdcl::serial::unpack(Eigen::MatrixBase<Derived> &M)
                 ii = unpacku32(buf_float);
                 M(i, j) = unpack754_32(ii);
                 loc += 4;
+            }
+        }
+        break;
+
+        case 'i': // int
+        for(i = 0; i < M.rows(); i++)
+        {
+            for(j = 0; j < M.cols(); j++)
+            {
+                std::copy(&buf[loc], &buf[loc + 2], buf_int);
+                ii = unpacki16(buf_int);
+                M(i, j) = unpack754_16(ii);
+                loc += 2;
             }
         }
         break;
@@ -446,6 +471,13 @@ template void fdcl::serial::pack(
 template void fdcl::serial::pack(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
 
+template void fdcl::serial::pack(
+        Eigen::MatrixBase< Eigen::Matrix<int,4,1> >& M);
+template void fdcl::serial::pack(
+        Eigen::MatrixBase< Eigen::Matrix<int,6,1> >& M);
+template void fdcl::serial::pack(
+        Eigen::MatrixBase< Eigen::Matrix<int,8,1> >& M);
+
 template void fdcl::serial::pack_as_float(
         Eigen::MatrixBase< Eigen::Matrix<double,3,1> >& M);
 template void fdcl::serial::pack_as_float(
@@ -500,3 +532,9 @@ template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,8,1> >& M);
 template void fdcl::serial::unpack(
         Eigen::MatrixBase< Eigen::Matrix<double,15,15> >& M);
+template void fdcl::serial::unpack(
+        Eigen::MatrixBase< Eigen::Matrix<int,4,1> >& M);
+template void fdcl::serial::unpack(
+        Eigen::MatrixBase< Eigen::Matrix<int,6,1> >& M);
+template void fdcl::serial::unpack(
+        Eigen::MatrixBase< Eigen::Matrix<int,8,1> >& M);
